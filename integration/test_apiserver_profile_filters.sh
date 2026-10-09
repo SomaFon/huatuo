@@ -76,7 +76,7 @@ assert_profile_filter() {
 }
 
 storage_start
-storage_curl --fail-with-body -X PUT "${STORAGE_ADDR}/${PROFILE_FILTER_INDEX}" \
+storage_curl --fail -X PUT "${STORAGE_ADDR}/${PROFILE_FILTER_INDEX}" \
 	-H 'Content-Type: application/json' -d '{"mappings":{"properties":{
   "tracer_id":{"type":"keyword"},
   "hostname":{"type":"text","fields":{"keyword":{"type":"keyword"}}},
@@ -100,7 +100,7 @@ jq -cn --arg type "${PROFILE_FILTER_TYPE}" '
  ][] | {index:{_id:.tracer_id}},
  ({uploaded_timestamp:"1970-01-01T00:00:00.000Z",profile_data:{profile_type:$type}} + .)
 ' > "${HUATUO_BAMAI_TEST_TMPDIR}/profiles.ndjson"
-storage_curl --fail-with-body -X POST "${STORAGE_ADDR}/${PROFILE_FILTER_INDEX}/_bulk?refresh=true" \
+storage_curl --fail -X POST "${STORAGE_ADDR}/${PROFILE_FILTER_INDEX}/_bulk?refresh=true" \
 	-H 'Content-Type: application/x-ndjson' \
 	--data-binary "@${HUATUO_BAMAI_TEST_TMPDIR}/profiles.ndjson" \
 	> "${HUATUO_BAMAI_TEST_TMPDIR}/seed-profiles.json"
